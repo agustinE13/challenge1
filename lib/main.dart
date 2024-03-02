@@ -1,4 +1,5 @@
 import 'package:challenge_app/pages/home_page.dart';
+import 'package:challenge_app/pages/onboard_screen.dart';
 import 'package:challenge_app/pages/splash_screen.dart';
 import 'package:challenge_app/settings/app_value_notifier.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
                   .light(), //value?ThemeApp.DarkTheme(context):ThemeApp.lightTheme(context),
           home: const SplashScreen(),
           routes: {
-            "/onboard": (BuildContext context) => (),
+            "/onboard": (BuildContext context) => const onBoardScreen(),
+            "/main": (BuildContext context) => const HomePageMotors(),
           },
           debugShowCheckedModeBanner: false,
         );

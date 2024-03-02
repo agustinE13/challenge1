@@ -8,9 +8,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _rememberMe = false;
+  final _formKey = GlobalKey<FormState>();
 
   Widget _buildEmailTF() {
+    String emailRegex =
+        r'^[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*@[a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,5}$';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -23,7 +25,7 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.centerLeft,
           decoration: kBoxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             keyboardType: TextInputType.emailAddress,
             style: const TextStyle(
               color: Colors.white,
@@ -39,6 +41,14 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'Enter your Email',
               hintStyle: kHintTextStyle,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Empty fields';
+              } else if (!RegExp(emailRegex).hasMatch(value)) {
+                return 'Enter a valid email';
+              }
+              return null;
+            },
           ),
         ),
       ],
@@ -58,7 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
           alignment: Alignment.centerLeft,
           decoration: kBoxDecorationStyle,
           height: 60.0,
-          child: TextField(
+          child: TextFormField(
             obscureText: true,
             style: const TextStyle(
               color: Colors.white,
@@ -74,6 +84,14 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'Enter your Password',
               hintStyle: kHintTextStyle,
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Empty field';
+              } else if (value.length < 3) {
+                return 'Password must contain at least 3 characters';
+              }
+              return null;
+            },
           ),
         ),
       ],
@@ -85,38 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
       alignment: Alignment.centerRight,
       child: TextButton(
         onPressed: () => print('Forgot Password Button Pressed'),
-       // padding: EdgeInsets.only(right: 0.0),
+        // padding: EdgeInsets.only(right: 0.0),
         child: Text(
           'Forgot Password?',
           style: kLabelStyle,
         ),
-      ),
-    );
-  }
-
-  Widget _buildRememberMeCheckbox() {
-    return Container(
-      height: 20.0,
-      child: Row(
-        children: <Widget>[
-          Theme(
-            data: ThemeData(unselectedWidgetColor: Colors.white),
-            child: Checkbox(
-              value: _rememberMe,
-              checkColor: Colors.green,
-              activeColor: Colors.white,
-              onChanged: (value) {
-                setState(() {
-                  _rememberMe = value!;
-                });
-              },
-            ),
-          ),
-          Text(
-            'Remember me',
-            style: kLabelStyle,
-          ),
-        ],
       ),
     );
   }
@@ -127,12 +118,14 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: ElevatedButton(
         onPressed: () {
-          
+          if (_formKey.currentState!.validate()) {
+            Navigator.pushNamed(context, '/onboard');
+          }
         },
         child: const Text(
           'LOGIN',
           style: TextStyle(
-            color: Color(0xFF527DAA),
+            color: Color.fromRGBO(82, 125, 170, 1),
             letterSpacing: 1.5,
             fontSize: 18.0,
             fontWeight: FontWeight.bold,
@@ -143,14 +136,12 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-
-
   Widget _buildSignupBtn() {
     return GestureDetector(
       onTap: () => print('Sign Up Button Pressed'),
       child: RichText(
         text: const TextSpan(
-          children:  [
+          children: [
             TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
@@ -190,10 +181,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
+                      Color.fromRGBO(102, 187, 106, 1), //400
+                      Color.fromRGBO(30, 136, 229, 1), //600
+                      Color.fromRGBO(165, 214, 167, 1), //200
+                      Color.fromRGBO(100, 181, 246, 1), //300
                     ],
                     stops: [0.1, 0.4, 0.7, 0.9],
                   ),
@@ -210,7 +201,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                     const Text(
+                      const Text(
                         'Sign In',
                         style: TextStyle(
                           color: Colors.white,
@@ -219,16 +210,19 @@ class _LoginScreenState extends State<LoginScreen> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 30.0),
-                      _buildEmailTF(),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
-                      _buildPasswordTF(),
-                      _buildForgotPasswordBtn(),
-                      _buildRememberMeCheckbox(),
-                      _buildLoginBtn(),
-                      _buildSignupBtn(),
+                      Form(
+                          key: _formKey,
+                          child: Column(children: [
+                            const SizedBox(height: 20.0),
+                            _buildEmailTF(),
+                            const SizedBox(
+                              height: 20.0,
+                            ),
+                            _buildPasswordTF(),
+                            _buildForgotPasswordBtn(),
+                            _buildLoginBtn(),
+                            _buildSignupBtn(),
+                          ]))
                     ],
                   ),
                 ),

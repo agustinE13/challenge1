@@ -204,8 +204,8 @@ class _DetailsMotorsPageState extends State<DetailsMotorsPage> {
                             child: Container(
                               child: Text(
                                 widget.motors.description,
-                                softWrap:
-                                    true,
+                                  softWrap:
+                                      true,
                               ),
                             ),
                           ),
